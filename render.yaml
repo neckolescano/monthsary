@@ -12,3 +12,9 @@ services:
         sync: false
       - key: APP_URL
         value: https://monthsary-surprise.onrender.com
+      - key: SESSION_DRIVER
+        value: file
+      - key: CACHE_STORE
+        value: file
+      - key: QUEUE_CONNECTION
+        value: sync

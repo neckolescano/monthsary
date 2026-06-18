@@ -54,12 +54,16 @@ RUN php artisan key:generate \
     && (php artisan storage:link || true) \
     && (php artisan migrate --force || true)
 
-RUN mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views bootstrap/cache public/uploads \
-    && chown -R www-data:www-data storage bootstrap/cache public/uploads \
-    && chmod -R 775 storage bootstrap/cache public/uploads
+RUN mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views bootstrap/cache public/uploads database \
+    && chown -R www-data:www-data storage bootstrap/cache public/uploads database \
+    && chmod -R 775 storage bootstrap/cache public/uploads database \
+    && chmod 664 database/database.sqlite || true
 
 ENV APP_ENV=production
 ENV APP_DEBUG=false
+ENV SESSION_DRIVER=file
+ENV CACHE_STORE=file
+ENV QUEUE_CONNECTION=sync
 
 EXPOSE 10000
 
