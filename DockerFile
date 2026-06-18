@@ -1,28 +1,41 @@
 FROM php:8.2-fpm
 
-# Install dependencies
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
-    libpng-dev libjpeg-dev libfreetype6-dev zip git unzip nodejs npm
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    zip \
+    git \
+    unzip \
+    nodejs \
+    npm
 
+# Install PHP extensions
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg && \
     docker-php-ext-install gd pdo pdo_mysql
 
+# Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# Set working directory
 WORKDIR /var/www
 COPY . .
 
-# Build assets
-RUN composer install --no-dev --optimize-autoloader && \
-    npm install && npm run build
+# IMPORTANT: Ensure the environment exists
+RUN touch .env && \
+    echo "APP_KEY=${APP_KEY}" >> .env && \
+    echo "APP_ENV=production" >> .env && \
+    echo "APP_DEBUG=false" >> .env
 
-# Set permissions
-RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache && \
-    chmod -R 775 /var/www/storage /var/www/bootstrap/cache
+# Install PHP and JS dependencies
+RUN composer install --no-dev --optimize-autoloader
+RUN npm install && npm run build
 
-# Make the entrypoint script executable
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
+# Set permissions for Laravel
+RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
+RUN chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
+# Expose port and start
 EXPOSE 8000
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+CMD php artisan serve --host=0.0.0.0 --port=8000
