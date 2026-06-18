@@ -56,7 +56,6 @@ RUN mkdir -p storage/framework/cache storage/framework/sessions storage/framewor
     && chown -R www-data:www-data storage bootstrap/cache public/uploads \
     && chmod -R 775 storage bootstrap/cache public/uploads
 
-ENV PORT=10000
 EXPOSE 10000
 
 CMD ["apache2-foreground"]
