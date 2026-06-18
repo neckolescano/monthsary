@@ -42,11 +42,12 @@ WORKDIR /var/www/html
 
 COPY . .
 
-RUN composer install --no-interaction --prefer-dist --no-dev --optimize-autoloader \
+RUN cp .env.example .env \
+    && composer install --no-interaction --prefer-dist --no-dev --optimize-autoloader \
     && npm install \
     && npm run build
 
-RUN php artisan key:generate --force \
+RUN php artisan key:generate \
     && php artisan config:cache \
     && php artisan route:cache \
     && php artisan view:cache \
