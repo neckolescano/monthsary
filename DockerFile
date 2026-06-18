@@ -30,12 +30,12 @@ RUN npm install && npm run build
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache && \
     chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
-# Expose port and start
-EXPOSE 8000
-
-# 34. Make the entrypoint script executable
+# Copy and setup entrypoint script
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
-# 35. Tell Docker to use the script
+# Expose port
+EXPOSE 8000
+
+# Tell Docker to use the script
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
