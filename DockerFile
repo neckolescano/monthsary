@@ -23,7 +23,10 @@ WORKDIR /var/www
 COPY . .
 
 # IMPORTANT: Ensure the environment exists
-RUN cp .env.example .env
+RUN touch .env && \
+    echo "APP_KEY=${APP_KEY}" >> .env && \
+    echo "APP_ENV=production" >> .env && \
+    echo "APP_DEBUG=false" >> .env
 
 # Install PHP and JS dependencies
 RUN composer install --no-dev --optimize-autoloader
